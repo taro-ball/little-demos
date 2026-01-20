@@ -1,14 +1,14 @@
 # p5.js Rotating Grid Demo
 
-A simple p5.js demo showing a 20x20 grid of squares that rotate based on their distance from the mouse cursor.
+A simple p5.js demo 
 
-## Files
-
-- `index.html` - HTML page that loads p5.js and the sketch
-- `sketch.js` - The p5.js sketch code
 
 ## Running
 
+### From github: 
+https://taro-ball.github.io/little-demos/
+
+### Locally:
 Open `index.html` in a web browser. That's it!
 
 Alternatively, use a local server:
