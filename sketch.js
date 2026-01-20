@@ -27,3 +27,7 @@ function draw() {
     }
   }
 }
+
+function touchMoved() {
+  return false;
+}
