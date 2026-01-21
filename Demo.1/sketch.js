@@ -2,15 +2,16 @@ let size = 30;
 let cols = 35;
 let rows = 50;
 
-let color_speed=0.3;
+let color_speed = 0.3;
 
 function setup() {
   createCanvas(cols * size, rows * size);
+  colorMode(HSL, 360, 100, 100);
   rectMode(CENTER);
 }
 
 function draw() {
-  background(255);
+  background(0, 0, 100);
 
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
@@ -22,8 +23,8 @@ function draw() {
       push();
       translate(x, y);
       rotate(angle);
-      fill((d * color_speed) % 255, 200 - ((d * color_speed)% 100), 100);
-      stroke(255 - ((d * color_speed) % 255), 200, (d * color_speed) % 200);
+      fill((d * color_speed) % 360, 80, 60);
+      stroke((d * color_speed + 90) % 360, 80, 60);
       strokeWeight(6);
       rect(0, 0, size - 4, size - 4);
       pop();
