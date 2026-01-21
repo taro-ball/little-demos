@@ -1,6 +1,6 @@
-let size = 30;
-let cols = 35;
-let rows = 50;
+let size = 60;
+let cols = 30;
+let rows = 40;
 
 let color_speed = 0.7;
 
@@ -18,7 +18,7 @@ function draw() {
       let x = i * size + size / 2;
       let y = j * size + size / 2;
       let d = dist(x, y, mouseX, mouseY);
-      let angle = d * 0.05;
+      let angle = d * 0.015;
 
       push();
       translate(x, y);
