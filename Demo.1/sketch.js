@@ -2,7 +2,7 @@ let size = 30;
 let cols = 35;
 let rows = 50;
 
-let color_speed = 0.3;
+let color_speed = 0.7;
 
 function setup() {
   createCanvas(cols * size, rows * size);
@@ -23,9 +23,9 @@ function draw() {
       push();
       translate(x, y);
       rotate(angle);
-      fill((d * color_speed) % 360, 80, 60);
-      stroke((d * color_speed + 90) % 360, 80, 60);
-      strokeWeight(6);
+      fill((d * color_speed) % 360, 100-d/10, 60);
+      stroke((d * color_speed + 90) % 360, 100-d/3, 60);
+      strokeWeight(d * 0.01);
       rect(0, 0, size - 4, size - 4);
       pop();
     }
