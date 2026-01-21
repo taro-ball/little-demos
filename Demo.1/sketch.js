@@ -18,14 +18,14 @@ function draw() {
       let x = i * size + size / 2;
       let y = j * size + size / 2;
       let d = dist(x, y, mouseX, mouseY);
-      let angle = d * 0.01;
+      let angle = d * 0.05;
 
       push();
       translate(x, y);
       rotate(angle);
-      fill((d * color_speed) % 360, 100-d/10, 60);
-      stroke((d * color_speed + 90) % 360, 100-d/3, 60);
-      strokeWeight(d * 0.01);
+      fill((d * color_speed) % 360, 100 - d / 10, 60);
+      stroke((d * color_speed + 90) % 360, 100 - d / 3, 100);
+      strokeWeight(d * d * 0.0001);
       rect(0, 0, size - 4, size - 4);
       pop();
     }
