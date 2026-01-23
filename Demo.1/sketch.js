@@ -1,6 +1,6 @@
 let size = 60;
-let cols = 30;
-let rows = 40;
+let cols = 15;
+let rows = 25;
 
 let color_speed = 0.7;
 
