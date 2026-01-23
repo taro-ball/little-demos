@@ -32,11 +32,11 @@ class Puck {
   draw() {
     push();
     translate(this.x, this.y);
-    rotate(QUARTER_PI);
-    fill(1);
-    stroke(0, 100, 50); // red in HSL
-    strokeWeight(3);
-    rect(0, 0, size/4, size / 4);
+    //rotate(QUARTER_PI);
+    //fill(1);
+    //stroke(0, 100, 50); // red in HSL
+    //strokeWeight(3);
+    //rect(0, 0, size/4, size / 4);
     pop();
   }
 }
