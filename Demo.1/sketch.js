@@ -15,9 +15,24 @@ class Puck {
   update(targetX, targetY) {
     let dx = targetX - this.x;
     let dy = targetY - this.y;
-    let speed = 0.0002; // per millisecond
-    this.x += dx * speed * deltaTime;
-    this.y += dy * speed * deltaTime;
+    let d = dist(0, 0, dx, dy);
+
+    if (d > 10) {
+      let speed = 0.0009; // per millisecond
+      this.x += dx * speed * deltaTime;
+      this.y += dy * speed * deltaTime;
+    }
+  }
+
+  draw() {
+    push();
+    translate(this.x, this.y);
+    rotate(QUARTER_PI);
+    fill(1);
+    stroke(0, 100, 50); // red in HSL
+    strokeWeight(3);
+    rect(0, 0, size/4, size / 4);
+    pop();
   }
 }
 
@@ -50,6 +65,8 @@ function draw() {
       pop();
     }
   }
+
+  puck.draw();
 }
 
 function touchMoved() {
