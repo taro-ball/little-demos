@@ -22,6 +22,11 @@ class Puck {
       this.x += dx * speed * deltaTime;
       this.y += dy * speed * deltaTime;
     }
+
+    // Keep puck within canvas bounds
+    let margin = size / 8;
+    this.x = constrain(this.x, margin, width - margin);
+    this.y = constrain(this.y, margin, height - margin);
   }
 
   draw() {
