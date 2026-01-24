@@ -1,21 +1,9 @@
-function showVars(vars) {
-  push();
-  fill(0);
-  noStroke();
-  textSize(14);
-  let y = 20;
-  for (let [name, value] of Object.entries(vars)) {
-    text(name + ": " + (typeof value === 'number' ? value.toFixed(2) : value), 10, y);
-    y += 20;
-  }
-  pop();
-}
-
 function setup() {
   createCanvas(900, 900);
   segmentSize = 0.1;
   insideDiameter = 5;
   curls=PI*2.5; //2-2.7
+  myStroke = 7//map(mouseY, 0, height, 0, 8);
 
 }
 
@@ -27,7 +15,7 @@ function draw() {
 
   let curls = map(mouseX, 0, width, 12, 18);
   let scale2 = map(mouseY, 0, height, 0.5, 30);
-  let myStroke = 5//map(mouseY, 0, height, 0, 8);
+  
   let end = 0;
 
   // Calculate stalk base position (at a=curls) and translate so it stays fixed
@@ -39,7 +27,7 @@ function draw() {
 
   stroke(34, 139, 34);
   noFill();
-  translate(350 - baseX, 350 - baseY);
+  translate(width/2 - baseX, height/2 - baseY);
 
   let prevX, prevY;
   for (let a = curls; a > end; a -= segmentSize) {
@@ -56,4 +44,17 @@ function draw() {
     prevX = x;
     prevY = y;
   }
+}
+
+function showVars(vars) {
+  push();
+  fill(0);
+  noStroke();
+  textSize(18);
+  let y = 20;
+  for (let [name, value] of Object.entries(vars)) {
+    text(name + ": " + (typeof value === 'number' ? value.toFixed(2) : value), 10, y);
+    y += 20;
+  }
+  pop();
 }
