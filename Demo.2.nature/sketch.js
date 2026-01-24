@@ -27,7 +27,7 @@ function draw() {
 
   stroke(34, 139, 34);
   noFill();
-  translate(width/2 - baseX, height/2 - baseY);
+  translate(width/2 - baseX, height*0.6 - baseY);
 
   let prevX, prevY;
   for (let a = curls; a > end; a -= segmentSize) {
