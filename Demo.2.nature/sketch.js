@@ -1,4 +1,5 @@
 let fernInstances = [];
+const BUTTON_RECT = { x: 0, y: 0, w: 220, h: 55, r: 0 };
 
 function setup() {
   createCanvas(900, 900);
@@ -152,8 +153,55 @@ function draw() {
     fern.update(mouseX, mouseY);
     fern.draw(scale2, mouseX, mouseY, maxDist);
   }
+
+  drawFernButton();
 }
 
 function getAllFronds(instances = fernInstances) {
   return instances.flatMap(fern => fern.fronds);
+}
+let eyeArray="@#$^*-_+=807qQWTYUIO7AHXVM<>"
+let mouthArray="-_+=wuioAxvm<>,."
+function drawFernButton() {
+  let buttonColor = getCurrentFernColor();
+  push();
+  noStroke();
+  if (buttonColor) {
+    fill(
+      buttonColor[0],
+      buttonColor[1],
+      buttonColor[2],
+      buttonColor.length > 3 ? buttonColor[3] : 1
+    );
+  } 
+  rect(BUTTON_RECT.x, BUTTON_RECT.y, BUTTON_RECT.w, BUTTON_RECT.h, BUTTON_RECT.r);
+
+  let textLightness = buttonColor && buttonColor[2] > 60 ? 10 : 95;
+  fill(0, 0, textLightness);
+  textAlign(CENTER, CENTER);
+  textSize(66);
+  text("-.-", BUTTON_RECT.x + BUTTON_RECT.w / 2, BUTTON_RECT.y + BUTTON_RECT.h / 2);
+  pop();
+}
+
+function getCurrentFernColor() {
+  if (fernInstances.length && fernInstances[0].colorHSL) {
+    return fernInstances[0].colorHSL;
+  }
+  return null;
+}
+
+function mousePressed() {
+  if (isOverButton(mouseX, mouseY)) {
+    createRandomFern();
+  }
+}
+
+function isOverButton(mx, my) {
+  return (
+    mx >= BUTTON_RECT.x &&
+    mx <= BUTTON_RECT.x + BUTTON_RECT.w &&
+    my >= BUTTON_RECT.y &&
+    my <= BUTTON_RECT.y + BUTTON_RECT.h
+  );
 }
