@@ -1,16 +1,28 @@
+let curlInstances = [];
+
+function setup() {
+  createCanvas(900, 900);
+  let segmentSize = 0.1;
+  let insideDiameter = 5;
+  let strokeMax = 7;
+
+  curlInstances.push(new Curl(width * 0.5, height * 0.4, insideDiameter, segmentSize, strokeMax, PI * 8));
+  curlInstances.push(new Curl(width * 0.5, height * 0.4, insideDiameter, segmentSize, strokeMax, PI * 9));
+}
+
 class Curl {
-  constructor(x, y, insideDiameter, segmentSize, strokeMax, curlsOffset) {
+  constructor(x, y, insideDiameter, segmentSize, strokeMax, curls) {
     this.x = x;
     this.y = y;
     this.insideDiameter = insideDiameter;
     this.segmentSize = segmentSize;
     this.strokeMax = strokeMax;
-    this.curlsOffset = curlsOffset;
+    this.curls = curls;
   }
 
-  draw(curls, scale2) {
+  draw(scale2) {
     let end = 0;
-    let curlsAdjusted = curls + this.curlsOffset;
+    let curlsAdjusted = this.curls;
 
     let baseR = this.insideDiameter + curlsAdjusted * scale2;
     let baseX = baseR * cos(curlsAdjusted);
@@ -40,34 +52,21 @@ class Curl {
   }
 }
 
-let curlInstances = [];
-
-function setup() {
-  createCanvas(900, 900);
-  let segmentSize = 0.1;
-  let insideDiameter = 5;
-  let strokeMax = 7;
-
-  curlInstances.push(new Curl(width * 0.5, height * 0.4, insideDiameter, segmentSize, strokeMax, PI * 8));
-  curlInstances.push(new Curl(width * 0.5, height * 0.4, insideDiameter, segmentSize, strokeMax, PI * 9));
-}
-
 function draw() {
   background(255);
   stroke(34, 139, 34);
 
   noFill();
 
-  let curls = map(mouseX, 0, width, 12, 18);
   let scale2 = map(mouseY, 0, height, 0.5, 30);
 
   showVars({
-    curls: curl => curls + curl.curlsOffset,
+    curls: inst => inst.curls,
     scale2,
   });
 
   for (let curl of curlInstances) {
-    curl.draw(curls, scale2);
+    curl.draw(scale2);
   }
 }
 
