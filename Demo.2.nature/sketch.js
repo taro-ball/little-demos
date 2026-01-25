@@ -2,25 +2,44 @@ let fernInstances = [];
 
 function setup() {
   createCanvas(900, 900);
-  let segmentSize = 0.1;
+  colorMode(HSL, 360, 100, 100, 1);
+  let segmentSize = 0.2;
   let insideDiameter = 5;
   let strokeMax = 7;
+  let fernColorHSL = [99, 99, 66];
 
-  fernInstances.push(new Fern(width * 0.5, height * 0.4, 4, insideDiameter, segmentSize, strokeMax, PI * 2));
+  fernInstances.push(
+    new Fern(width * 0.5, height * 0.4, 4, insideDiameter, segmentSize, strokeMax, PI * 2, fernColorHSL, 0)
+  );
+
 }
 
 class Fern {
-  constructor(x, y, frondCount, insideDiameter, segmentSize, strokeMax, baseCurls) {
+  constructor(
+    x,
+    y,
+    frondCount,
+    insideDiameter,
+    segmentSize,
+    strokeMax,
+    baseCurls,
+    colorHSL,
+    invertDependency = false
+  ) {
     this.x = x;
     this.y = y;
     this.dx = 0;
     this.dy = 0;
     this.fronds = [];
+    this.invertDependency = invertDependency;
+    this.colorHSL = colorHSL;
 
     let spacing = TWO_PI / frondCount;
     for (let i = 0; i < frondCount; i++) {
       let curls = baseCurls + i * spacing;
-      this.fronds.push(new Frond(x, y, insideDiameter, segmentSize, strokeMax, curls));
+      this.fronds.push(
+        new Frond(x, y, insideDiameter, segmentSize, strokeMax, curls, this.colorHSL, this.invertDependency)
+      );
     }
   }
 
@@ -49,20 +68,23 @@ class Fern {
 }
 
 class Frond {
-  constructor(x, y, insideDiameter, segmentSize, strokeMax, curls) {
+  constructor(x, y, insideDiameter, segmentSize, strokeMax, curls, colorHSL, invertDependency = false) {
     this.x = x;
     this.y = y;
     this.insideDiameter = insideDiameter;
     this.segmentSize = segmentSize;
     this.strokeMax = strokeMax;
     this.curls = curls;
+    this.invertDependency = invertDependency;
+    this.colorHSL = colorHSL;
   }
 
   draw(scale2, mx, my, maxDist) {
     let end = 0;
     let distanceFromBase = dist(mx, my, this.x, this.y);
     let t = constrain(distanceFromBase / maxDist, 0, 1);
-    let curlsAdjusted = lerp(this.curls * 1.5, this.curls * 0.5, t);
+    let lerpT = this.invertDependency ? 1 - t : t;
+    let curlsAdjusted = lerp(this.curls * 1.5, this.curls * 0.5, lerpT);
 
     let baseR = this.insideDiameter + curlsAdjusted * scale2;
     let baseX = baseR * cos(curlsAdjusted);
@@ -71,7 +93,14 @@ class Frond {
     push();
     translate(this.x - baseX, this.y - baseY);
     noFill();
-    stroke(34, 139, 34);
+    if (this.colorHSL && this.colorHSL.length >= 3) {
+      stroke(
+        this.colorHSL[0],
+        this.colorHSL[1],
+        this.colorHSL[2],
+        this.colorHSL.length > 3 ? this.colorHSL[3] : 1
+      );
+    }
 
     let prevX, prevY;
     for (let a = curlsAdjusted; a > end; a -= this.segmentSize) {
@@ -94,7 +123,6 @@ class Frond {
 
 function draw() {
   background(255);
-  stroke(34, 139, 34);
 
   noFill();
 
