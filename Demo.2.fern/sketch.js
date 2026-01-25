@@ -11,7 +11,7 @@ function setup() {
 function createRandomFern() {
   let frondCount = floor(random(1, 6));
   let segmentSize = random(0.9, 2.2);
-  let insideDiameter = (0,10);
+  let insideDiameter = random(0, 10);
   let strokeMax = random(4, 14);
   let hue = random(80, 160);
   let saturation = random(65, 100);
@@ -161,11 +161,8 @@ function draw() {
   drawFernButton();
 }
 
-function getAllFronds(instances = fernInstances) {
-  return instances.flatMap(fern => fern.fronds);
-}
-let eyeArray="@#^*-+=07QQWTYUIO7AHXV<>~:x"
-let mouthArray="-__wov<>,..!"
+let eyeArray = "@#^*-+=07QQWTYUIO7AHXV<>~:x"
+let mouthArray = "-__wov<>,..!"
 let buttonText = "-.-"
 function drawFernButton() {
   let buttonColor = getCurrentFernColor();
@@ -178,7 +175,7 @@ function drawFernButton() {
       buttonColor[2],
       buttonColor.length > 3 ? buttonColor[3] : 1
     );
-  } 
+  }
   rect(BUTTON_RECT.x, BUTTON_RECT.y, BUTTON_RECT.w, BUTTON_RECT.h, BUTTON_RECT.r);
 
   let l = buttonColor ? constrain(buttonColor[2] + (buttonColor[2] > 55 ? -18 : 18), 0, 100) : 20;
@@ -199,7 +196,7 @@ function getCurrentFernColor() {
 function mousePressed() {
   if (isOverButton(mouseX, mouseY)) {
     createRandomFern();
-    buttonText = (e=eyeArray[floor(random(eyeArray.length))],e+mouthArray[floor(random(mouthArray.length))]+e);
+    buttonText = (e = eyeArray[floor(random(eyeArray.length))], e + mouthArray[floor(random(mouthArray.length))] + e);
   }
 }
 
@@ -211,3 +208,6 @@ function isOverButton(mx, my) {
     my <= BUTTON_RECT.y + BUTTON_RECT.h
   );
 }
+//ideas:
+// add successive buttons to lock/pulsate the parameters
+// tie emoji's to actual properties
