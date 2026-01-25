@@ -25,12 +25,15 @@ class Fern {
   }
 
   update(mx, my) {
+    // Scale motion to frame time (assuming 60fps baseline).
+    let dt = min(deltaTime, 100) / 16.6667;
     let ax = (mx - this.x) * 0.02;
     let ay = (my - this.y) * 0.02;
-    this.dx = (this.dx + ax) * 0.9;
-    this.dy = (this.dy + ay) * 0.9;
-    this.x += this.dx;
-    this.y += this.dy;
+    let damping = pow(0.9, dt);
+    this.dx = (this.dx + ax * dt) * damping;
+    this.dy = (this.dy + ay * dt) * damping;
+    this.x += this.dx * dt;
+    this.y += this.dy * dt;
 
     for (let frond of this.fronds) {
       frond.x = this.x;
