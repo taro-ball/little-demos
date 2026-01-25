@@ -18,6 +18,7 @@ function createRandomFern() {
   let lightness = random(35, 75);
   let fernColorHSL = [hue, saturation, lightness];
   let baseCurls = random(3, 12);
+  let scale2 = random(3, 7);
 
   fernInstances = [
     new Fern(
@@ -29,6 +30,7 @@ function createRandomFern() {
       strokeMax,
       baseCurls,
       fernColorHSL,
+      scale2,
       0
     )
   ];
@@ -44,6 +46,7 @@ class Fern {
     strokeMax,
     baseCurls,
     colorHSL,
+    scale2,
     invertDependency = false
   ) {
     this.x = x;
@@ -53,6 +56,7 @@ class Fern {
     this.fronds = [];
     this.invertDependency = invertDependency;
     this.colorHSL = colorHSL;
+    this.scale2 = scale2;
 
     let spacing = TWO_PI / frondCount;
     for (let i = 0; i < frondCount; i++) {
@@ -80,9 +84,9 @@ class Fern {
     }
   }
 
-  draw(scale2, mx, my, maxDist) {
+  draw(mx, my, maxDist) {
     for (let frond of this.fronds) {
-      frond.draw(scale2, mx, my, maxDist);
+      frond.draw(this.scale2, mx, my, maxDist);
     }
   }
 }
@@ -146,13 +150,12 @@ function draw() {
 
   noFill();
 
-  let scale2 = 4//map(mouseY, 0, height, 0.5, 30);
   let maxDist = min(width, height) * 0.75;
 
 
   for (let fern of fernInstances) {
     fern.update(mouseX, mouseY);
-    fern.draw(scale2, mouseX, mouseY, maxDist);
+    fern.draw(mouseX, mouseY, maxDist);
   }
 
   drawFernButton();
