@@ -13,12 +13,28 @@ class Fern {
   constructor(x, y, frondCount, insideDiameter, segmentSize, strokeMax, baseCurls) {
     this.x = x;
     this.y = y;
+    this.dx = 0;
+    this.dy = 0;
     this.fronds = [];
 
     let spacing = TWO_PI / frondCount;
     for (let i = 0; i < frondCount; i++) {
       let curls = baseCurls + i * spacing;
       this.fronds.push(new Frond(x, y, insideDiameter, segmentSize, strokeMax, curls));
+    }
+  }
+
+  update(mx, my) {
+    let ax = (mx - this.x) * 0.02;
+    let ay = (my - this.y) * 0.02;
+    this.dx = (this.dx + ax) * 0.9;
+    this.dy = (this.dy + ay) * 0.9;
+    this.x += this.dx;
+    this.y += this.dy;
+
+    for (let frond of this.fronds) {
+      frond.x = this.x;
+      frond.y = this.y;
     }
   }
 
@@ -84,6 +100,7 @@ function draw() {
 
 
   for (let fern of fernInstances) {
+    fern.update(mouseX, mouseY);
     fern.draw(scale2, mouseX, mouseY, maxDist);
   }
 }
