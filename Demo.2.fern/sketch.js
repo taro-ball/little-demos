@@ -1,4 +1,5 @@
 let fernInstances = [];
+let stationaryFerns = [];
 let BUTTON_RECT;
 
 function setup() {
@@ -25,6 +26,35 @@ function createRandomFern() {
       width * 0.5,
       height * 0.4,
       frondCount,
+      insideDiameter,
+      segmentSize,
+      strokeMax,
+      baseCurls,
+      fernColorHSL,
+      scale2,
+      0
+    )
+  ];
+
+  let sideOffset = 10;
+  let sideY = BUTTON_RECT.y + BUTTON_RECT.h / 2;
+  stationaryFerns = [
+    new Fern(
+      BUTTON_RECT.x - sideOffset,
+      sideY,
+      1,
+      insideDiameter,
+      segmentSize,
+      strokeMax,
+      baseCurls,
+      fernColorHSL,
+      scale2,
+      0
+    ),
+    new Fern(
+      BUTTON_RECT.x + BUTTON_RECT.w + sideOffset,
+      sideY,
+      1,
       insideDiameter,
       segmentSize,
       strokeMax,
@@ -158,6 +188,10 @@ function draw() {
     fern.draw(mouseX, mouseY, maxDist);
   }
 
+  for (let fern of stationaryFerns) {
+    fern.draw(mouseX, mouseY, maxDist);
+  }
+
   drawFernButton();
 }
 
@@ -202,10 +236,8 @@ function mousePressed() {
 
 function isOverButton(mx, my) {
   return (
-    mx >= BUTTON_RECT.x &&
-    mx <= BUTTON_RECT.x + BUTTON_RECT.w &&
-    my >= BUTTON_RECT.y &&
-    my <= BUTTON_RECT.y + BUTTON_RECT.h
+    mx >= BUTTON_RECT.x && mx <= BUTTON_RECT.x + BUTTON_RECT.w &&
+    my >= BUTTON_RECT.y && my <= BUTTON_RECT.y + BUTTON_RECT.h
   );
 }
 //ideas:
