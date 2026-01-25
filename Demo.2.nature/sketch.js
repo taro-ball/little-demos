@@ -17,7 +17,7 @@ function createRandomFern() {
   let saturation = random(65, 100);
   let lightness = random(35, 75);
   let fernColorHSL = [hue, saturation, lightness];
-  let baseCurls = random(3, 12);
+  let baseCurls = random(3, 10);
   let scale2 = random(3, 7);
 
   fernInstances = [
