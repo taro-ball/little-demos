@@ -1,4 +1,4 @@
-let curlInstances = [];
+let fernInstances = [];
 
 function setup() {
   createCanvas(900, 900);
@@ -6,11 +6,30 @@ function setup() {
   let insideDiameter = 5;
   let strokeMax = 7;
 
-  curlInstances.push(new Curl(width * 0.5, height * 0.4, insideDiameter, segmentSize, strokeMax, PI * 8));
-  curlInstances.push(new Curl(width * 0.5, height * 0.4, insideDiameter, segmentSize, strokeMax, PI * 9));
+  fernInstances.push(new Fern(width * 0.5, height * 0.4, 4, insideDiameter, segmentSize, strokeMax, PI * 2));
 }
 
-class Curl {
+class Fern {
+  constructor(x, y, frondCount, insideDiameter, segmentSize, strokeMax, baseCurls) {
+    this.x = x;
+    this.y = y;
+    this.fronds = [];
+
+    let spacing = TWO_PI / frondCount;
+    for (let i = 0; i < frondCount; i++) {
+      let curls = baseCurls + i * spacing;
+      this.fronds.push(new Frond(x, y, insideDiameter, segmentSize, strokeMax, curls));
+    }
+  }
+
+  draw(scale2, mx, my, maxDist) {
+    for (let frond of this.fronds) {
+      frond.draw(scale2, mx, my, maxDist);
+    }
+  }
+}
+
+class Frond {
   constructor(x, y, insideDiameter, segmentSize, strokeMax, curls) {
     this.x = x;
     this.y = y;
@@ -20,9 +39,11 @@ class Curl {
     this.curls = curls;
   }
 
-  draw(scale2) {
+  draw(scale2, mx, my, maxDist) {
     let end = 0;
-    let curlsAdjusted = this.curls;
+    let distanceFromBase = dist(mx, my, this.x, this.y);
+    let t = constrain(distanceFromBase / maxDist, 0, 1);
+    let curlsAdjusted = lerp(this.curls * 1.5, this.curls * 0.5, t);
 
     let baseR = this.insideDiameter + curlsAdjusted * scale2;
     let baseX = baseR * cos(curlsAdjusted);
@@ -58,36 +79,15 @@ function draw() {
 
   noFill();
 
-  let scale2 = map(mouseY, 0, height, 0.5, 30);
+  let scale2 = 4//map(mouseY, 0, height, 0.5, 30);
+  let maxDist = min(width, height) * 0.75;
 
-  showVars({
-    curls: inst => inst.curls,
-    scale2,
-  });
 
-  for (let curl of curlInstances) {
-    curl.draw(scale2);
+  for (let fern of fernInstances) {
+    fern.draw(scale2, mouseX, mouseY, maxDist);
   }
 }
 
-function showVars(vars, instances = curlInstances) {
-  push();
-  fill(0);
-  noStroke();
-  textSize(18);
-  let y = 20;
-  for (let [name, value] of Object.entries(vars)) {
-    let values;
-    if (Array.isArray(value)) {
-      values = value;
-    } else if (typeof value === 'function') {
-      values = instances.map((inst, idx) => value(inst, idx));
-    } else {
-      values = instances.map(() => value);
-    }
-    let formatted = values.map(v => (typeof v === 'number' ? v.toFixed(2) : v));
-    text(name + " [" + formatted.join(",") + "]", 10, y);
-    y += 20;
-  }
-  pop();
+function getAllFronds(instances = fernInstances) {
+  return instances.flatMap(fern => fern.fronds);
 }
