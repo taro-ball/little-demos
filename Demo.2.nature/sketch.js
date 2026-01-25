@@ -3,15 +3,32 @@ let fernInstances = [];
 function setup() {
   createCanvas(900, 900);
   colorMode(HSL, 360, 100, 100, 1);
-  let segmentSize = 0.2;
+  createRandomFern();
+}
+
+function createRandomFern() {
+  let frondCount = floor(random(1, 6));
+  let segmentSize = random(0.1, 2.2);
   let insideDiameter = 5;
   let strokeMax = 7;
-  let fernColorHSL = [99, 99, 66];
+  let hue = random(80, 160);
+  let saturation = random(65, 100);
+  let lightness = random(35, 75);
+  let fernColorHSL = [hue, saturation, lightness];
 
-  fernInstances.push(
-    new Fern(width * 0.5, height * 0.4, 4, insideDiameter, segmentSize, strokeMax, PI * 2, fernColorHSL, 0)
-  );
-
+  fernInstances = [
+    new Fern(
+      width * 0.5,
+      height * 0.4,
+      frondCount,
+      insideDiameter,
+      segmentSize,
+      strokeMax,
+      PI * 2,
+      fernColorHSL,
+      0
+    )
+  ];
 }
 
 class Fern {
