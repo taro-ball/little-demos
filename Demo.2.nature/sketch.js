@@ -1,9 +1,10 @@
 let fernInstances = [];
-const BUTTON_RECT = { x: 0, y: 0, w: 220, h: 55, r: 0 };
+let BUTTON_RECT;
 
 function setup() {
-  createCanvas(800, 1200);
+  createCanvas(980, 1500);
   colorMode(HSL, 360, 100, 100, 1);
+  BUTTON_RECT = { x: (width - 220) / 2, y: 0, w: 180, h: 55, r: 0 };
   createRandomFern();
 }
 
