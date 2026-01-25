@@ -8,13 +8,14 @@ function setup() {
 
 function createRandomFern() {
   let frondCount = floor(random(1, 6));
-  let segmentSize = random(0.1, 2.2);
-  let insideDiameter = 5;
-  let strokeMax = 7;
+  let segmentSize = random(0.9, 2.2);
+  let insideDiameter = (0,10);
+  let strokeMax = random(4, 14);
   let hue = random(80, 160);
   let saturation = random(65, 100);
   let lightness = random(35, 75);
   let fernColorHSL = [hue, saturation, lightness];
+  let baseCurls = random(3, 12);
 
   fernInstances = [
     new Fern(
@@ -24,7 +25,7 @@ function createRandomFern() {
       insideDiameter,
       segmentSize,
       strokeMax,
-      PI * 2,
+      baseCurls,
       fernColorHSL,
       0
     )
