@@ -160,8 +160,9 @@ function draw() {
 function getAllFronds(instances = fernInstances) {
   return instances.flatMap(fern => fern.fronds);
 }
-let eyeArray="@#$^*-_+=807qQWTYUIO7AHXVM<>"
-let mouthArray="-_+=wuioAxvm<>,."
+let eyeArray="@#^*-+=07QQWTYUIO7AHXV<>~:x"
+let mouthArray="-__wov<>,..!"
+let buttonText = "-.-"
 function drawFernButton() {
   let buttonColor = getCurrentFernColor();
   push();
@@ -179,8 +180,8 @@ function drawFernButton() {
   let textLightness = buttonColor && buttonColor[2] > 60 ? 10 : 95;
   fill(0, 0, textLightness);
   textAlign(CENTER, CENTER);
-  textSize(66);
-  text("-.-", BUTTON_RECT.x + BUTTON_RECT.w / 2, BUTTON_RECT.y + BUTTON_RECT.h / 2);
+  textSize(48);
+  text(buttonText, BUTTON_RECT.x + BUTTON_RECT.w / 2, BUTTON_RECT.y + BUTTON_RECT.h / 2);
   pop();
 }
 
@@ -194,6 +195,7 @@ function getCurrentFernColor() {
 function mousePressed() {
   if (isOverButton(mouseX, mouseY)) {
     createRandomFern();
+    buttonText = (e=eyeArray[floor(random(eyeArray.length))],e+mouthArray[floor(random(mouthArray.length))]+e);
   }
 }
 
