@@ -181,8 +181,8 @@ function drawFernButton() {
   } 
   rect(BUTTON_RECT.x, BUTTON_RECT.y, BUTTON_RECT.w, BUTTON_RECT.h, BUTTON_RECT.r);
 
-  let textLightness = buttonColor && buttonColor[2] > 60 ? 10 : 95;
-  fill(0, 0, textLightness);
+  let l = buttonColor ? constrain(buttonColor[2] + (buttonColor[2] > 55 ? -18 : 18), 0, 100) : 20;
+  fill(buttonColor ? buttonColor[0] : 0, buttonColor ? buttonColor[1] : 0, l, buttonColor?.[3] ?? 1);
   textAlign(CENTER, CENTER);
   textSize(48);
   text(buttonText, BUTTON_RECT.x + BUTTON_RECT.w / 2, BUTTON_RECT.y + BUTTON_RECT.h / 2);
