@@ -1,6 +1,7 @@
 let fernInstances = [];
 let stationaryFerns = [];
 let BUTTON_RECT;
+let currentFernParams = null;
 
 function setup() {
   createCanvas(980, 1500);
@@ -20,6 +21,17 @@ function createRandomFern() {
   let fernColorHSL = [hue, saturation, lightness];
   let baseCurls = random(3, 10);
   let scale2 = random(3, 7);
+
+  // Store current fern parameters for reuse
+  currentFernParams = {
+    frondCount,
+    segmentSize,
+    insideDiameter,
+    strokeMax,
+    fernColorHSL,
+    baseCurls,
+    scale2
+  };
 
   fernInstances = [
     new Fern(
@@ -184,7 +196,6 @@ function draw() {
 
 
   for (let fern of fernInstances) {
-    fern.update(mouseX, mouseY);
     fern.draw(mouseX, mouseY, maxDist);
   }
 
@@ -231,6 +242,22 @@ function mousePressed() {
   if (isOverButton(mouseX, mouseY)) {
     createRandomFern();
     buttonText = (e = eyeArray[floor(random(eyeArray.length))], e + mouthArray[floor(random(mouthArray.length))] + e);
+  } else if (currentFernParams) {
+    let newScale = currentFernParams.scale2 + random(-1, 1);
+    fernInstances.push(
+      new Fern(
+        mouseX,
+        mouseY,
+        currentFernParams.frondCount,
+        currentFernParams.insideDiameter,
+        currentFernParams.segmentSize,
+        currentFernParams.strokeMax,
+        currentFernParams.baseCurls,
+        currentFernParams.fernColorHSL,
+        newScale,
+        0
+      )
+    );
   }
 }
 
