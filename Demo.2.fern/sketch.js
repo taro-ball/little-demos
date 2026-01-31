@@ -2,11 +2,19 @@ let fernInstances = [];
 let stationaryFerns = [];
 let BUTTON_RECT;
 let currentFernConfig;
+let headX = 0;
+let headY = 0;
+let headDX = 0;
+let headDY = 0;
+let headAngle = 0;
+let headAngleVel = 0;
 
 function setup() {
   createCanvas(980, 1500);
   colorMode(HSL, 360, 100, 100, 1);
   BUTTON_RECT = { x: (width - 220) / 2, y: 0, w: 180, h: 55, r: 0 };
+  headX = width * 0.5;
+  headY = BUTTON_RECT.y + BUTTON_RECT.h / 2;
   createRandomFern();
 }
 
@@ -34,8 +42,8 @@ function createRandomFern() {
 
   fernInstances = [
     new Fern(
-      width * 0.5,
-      height * 0.4,
+      headX || width * 0.5,
+      headY || height * 0.4,
       frondCount,
       insideDiameter,
       segmentSize,
@@ -48,10 +56,10 @@ function createRandomFern() {
   ];
 
   let sideOffset = 10;
-  let sideY = BUTTON_RECT.y + BUTTON_RECT.h / 2;
+  let sideY = headY || BUTTON_RECT.y + BUTTON_RECT.h / 2;
   stationaryFerns = [
     new Fern(
-      BUTTON_RECT.x - sideOffset,
+      (headX ? headX - BUTTON_RECT.w / 2 : BUTTON_RECT.x) - sideOffset,
       sideY,
       1,
       insideDiameter,
@@ -63,7 +71,7 @@ function createRandomFern() {
       0
     ),
     new Fern(
-      BUTTON_RECT.x + BUTTON_RECT.w + sideOffset,
+      (headX ? headX - BUTTON_RECT.w / 2 : BUTTON_RECT.x) + BUTTON_RECT.w + sideOffset,
       sideY,
       1,
       insideDiameter,
@@ -125,6 +133,17 @@ class Fern {
       this.fronds.push(
         new Frond(x, y, insideDiameter, segmentSize, strokeMax, curls, this.colorHSL, this.invertDependency)
       );
+    }
+  }
+
+  setPosition(x, y) {
+    this.x = x;
+    this.y = y;
+    this.dx = 0;
+    this.dy = 0;
+    for (let frond of this.fronds) {
+      frond.x = this.x;
+      frond.y = this.y;
     }
   }
 
@@ -213,11 +232,42 @@ function draw() {
 
   let maxDist = min(width, height) * 0.75;
 
+  updateHead(mouseX, mouseY);
+  BUTTON_RECT.x = headX - BUTTON_RECT.w / 2;
+  BUTTON_RECT.y = headY - BUTTON_RECT.h / 2;
+
+  let sideOffset = 10;
+  let sideY = headY;
+  if (stationaryFerns.length >= 2) {
+    let handOffset = BUTTON_RECT.w / 2 + sideOffset;
+    let cosA = cos(headAngle);
+    let sinA = sin(headAngle);
+    let leftX = headX + (-handOffset * cosA);
+    let leftY = headY + (-handOffset * sinA);
+    let rightX = headX + (handOffset * cosA);
+    let rightY = headY + (handOffset * sinA);
+    stationaryFerns[0].setPosition(leftX, leftY);
+    stationaryFerns[1].setPosition(rightX, rightY);
+  }
 
   for (let i = 0; i < fernInstances.length; i++) {
     let fern = fernInstances[i];
-    let targetX = i === 0 ? mouseX : fernInstances[i - 1].x;
-    let targetY = i === 0 ? mouseY : fernInstances[i - 1].y;
+    let targetX = headX;
+    let targetY = headY;
+    if (i !== 0) {
+      let leader = fernInstances[i - 1];
+      let dx = fern.x - leader.x;
+      let dy = fern.y - leader.y;
+      let distToLeader = sqrt(dx * dx + dy * dy);
+      let desired = 10 * (leader.scale2 || 1);
+      if (distToLeader > 0.001) {
+        targetX = leader.x + (dx / distToLeader) * desired;
+        targetY = leader.y + (dy / distToLeader) * desired;
+      } else {
+        targetX = fern.x;
+        targetY = fern.y;
+      }
+    }
     fern.update(targetX, targetY);
     fern.draw(targetX, targetY, maxDist);
   }
@@ -226,16 +276,34 @@ function draw() {
     fern.draw(mouseX, mouseY, maxDist);
   }
 
-  drawFernButton();
+  drawFernButton(headAngle);
+}
+
+function updateHead(mx, my) {
+  let dt = min(deltaTime, 100) / 16.6667;
+  let ax = (mx - headX) * 0.03;
+  let ay = (my - headY) * 0.03;
+  let damping = pow(0.8, dt);
+  headDX = (headDX + ax * dt) * damping;
+  headDY = (headDY + ay * dt) * damping;
+  headX += headDX * dt;
+  headY += headDY * dt;
+
+  let targetAngle = constrain(headDX * 0.02, -0.35, 0.35);
+  headAngleVel = (headAngleVel + (targetAngle - headAngle) * 0.2 * dt) * pow(0.7, dt);
+  headAngle += headAngleVel * dt;
 }
 
 let eyeArray = "@#^*-+=07QQWTYUIO7AHXV<>~:x"
 let mouthArray = "-__wov<>,..!"
 let buttonText = "-.-"
-function drawFernButton() {
+function drawFernButton(angle = 0) {
   let buttonColor = getCurrentFernColor();
   push();
   noStroke();
+  translate(headX, headY);
+  rotate(angle);
+  translate(-BUTTON_RECT.w / 2, -BUTTON_RECT.h / 2);
   if (buttonColor) {
     fill(
       buttonColor[0],
@@ -244,13 +312,13 @@ function drawFernButton() {
       buttonColor.length > 3 ? buttonColor[3] : 1
     );
   }
-  rect(BUTTON_RECT.x, BUTTON_RECT.y, BUTTON_RECT.w, BUTTON_RECT.h, BUTTON_RECT.r);
+  rect(0, 0, BUTTON_RECT.w, BUTTON_RECT.h, BUTTON_RECT.r);
 
   let l = buttonColor ? constrain(buttonColor[2] + (buttonColor[2] > 55 ? -18 : 18), 0, 100) : 20;
   fill(buttonColor ? buttonColor[0] : 0, buttonColor ? buttonColor[1] : 0, l, buttonColor?.[3] ?? 1);
   textAlign(CENTER, CENTER);
   textSize(48);
-  text(buttonText, BUTTON_RECT.x + BUTTON_RECT.w / 2, BUTTON_RECT.y + BUTTON_RECT.h / 2);
+  text(buttonText, BUTTON_RECT.w / 2, BUTTON_RECT.h / 2);
   pop();
 }
 
