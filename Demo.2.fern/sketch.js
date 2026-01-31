@@ -1,6 +1,7 @@
 let fernInstances = [];
 let stationaryFerns = [];
 let BUTTON_RECT;
+let currentFernConfig;
 
 function setup() {
   createCanvas(980, 1500);
@@ -20,6 +21,16 @@ function createRandomFern() {
   let fernColorHSL = [hue, saturation, lightness];
   let baseCurls = random(3, 10);
   let scale2 = random(3, 7);
+
+  currentFernConfig = {
+    frondCount,
+    insideDiameter,
+    segmentSize,
+    strokeMax,
+    baseCurls,
+    fernColorHSL,
+    scale2
+  };
 
   fernInstances = [
     new Fern(
@@ -66,6 +77,26 @@ function createRandomFern() {
   ];
 }
 
+function createFollowerFern() {
+  if (!currentFernConfig || !fernInstances.length) return;
+
+  let leader = fernInstances[fernInstances.length - 1];
+  fernInstances.push(
+    new Fern(
+      leader.x,
+      leader.y,
+      currentFernConfig.frondCount,
+      currentFernConfig.insideDiameter,
+      currentFernConfig.segmentSize,
+      currentFernConfig.strokeMax,
+      currentFernConfig.baseCurls,
+      currentFernConfig.fernColorHSL,
+      currentFernConfig.scale2,
+      0
+    )
+  );
+}
+
 class Fern {
   constructor(
     x,
@@ -102,7 +133,7 @@ class Fern {
     let dt = min(deltaTime, 100) / 16.6667;
     let ax = (mx - this.x) * 0.02;
     let ay = (my - this.y) * 0.02;
-    let damping = pow(0.9, dt);
+    let damping = pow(0.77, dt);
     this.dx = (this.dx + ax * dt) * damping;
     this.dy = (this.dy + ay * dt) * damping;
     this.x += this.dx * dt;
@@ -183,9 +214,12 @@ function draw() {
   let maxDist = min(width, height) * 0.75;
 
 
-  for (let fern of fernInstances) {
-    fern.update(mouseX, mouseY);
-    fern.draw(mouseX, mouseY, maxDist);
+  for (let i = 0; i < fernInstances.length; i++) {
+    let fern = fernInstances[i];
+    let targetX = i === 0 ? mouseX : fernInstances[i - 1].x;
+    let targetY = i === 0 ? mouseY : fernInstances[i - 1].y;
+    fern.update(targetX, targetY);
+    fern.draw(targetX, targetY, maxDist);
   }
 
   for (let fern of stationaryFerns) {
@@ -231,6 +265,8 @@ function mousePressed() {
   if (isOverButton(mouseX, mouseY)) {
     createRandomFern();
     buttonText = (e = eyeArray[floor(random(eyeArray.length))], e + mouthArray[floor(random(mouthArray.length))] + e);
+  } else {
+    createFollowerFern();
   }
 }
 
