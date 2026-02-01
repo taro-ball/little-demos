@@ -8,6 +8,7 @@ let headDX = 0;
 let headDY = 0;
 let headAngle = 0;
 let headAngleVel = 0;
+let maxFerns = 0;
 
 function setup() {
   createCanvas(980, 1500);
@@ -29,6 +30,8 @@ function createRandomFern() {
   let fernColorHSL = [hue, saturation, lightness];
   let baseCurls = random(3, 10);
   let scale2 = random(3, 7);
+  let baseMax = map(scale2, 3, 7, 12, 4);
+  maxFerns = max(2, floor(baseMax + random(-1, 2)));
 
   currentFernConfig = {
     frondCount,
@@ -330,7 +333,7 @@ function getCurrentFernColor() {
 }
 
 function mousePressed() {
-  if (isOverButton(mouseX, mouseY)) {
+  if (fernInstances.length >= maxFerns) {
     createRandomFern();
     buttonText = (e = eyeArray[floor(random(eyeArray.length))], e + mouthArray[floor(random(mouthArray.length))] + e);
   } else {
