@@ -43,6 +43,17 @@ function createRandomFern() {
     scale2
   };
 
+  // Store current fern parameters for reuse
+  currentFernParams = {
+    frondCount,
+    segmentSize,
+    insideDiameter,
+    strokeMax,
+    fernColorHSL,
+    baseCurls,
+    scale2
+  };
+
   fernInstances = [
     new Fern(
       headX || width * 0.5,
