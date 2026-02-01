@@ -31,7 +31,7 @@ function createRandomFern() {
   let fernColorHSL = [hue, saturation, lightness];
   let baseCurls = random(3, 10);
   let scale2 = random(2, 4);
-  maxFerns = 12 - scale2*2
+  maxFerns = 16 - scale2*2.5
 
   currentFernConfig = {
     frondCount,
@@ -316,8 +316,12 @@ function getArmFernPositions() {
 
 let eyeArray = "@#^*-+=07QQWTYUIO7AHXV<>~:x"
 let mouthArray = "-__wov<>,..!"
-let buttonText = "-.-"
+let buttonEyes = "-";
+let buttonMouth = ".";
+let buttonText = "-.-";
+let lastWillResetNext = false;
 function drawFernButton(angle = 0) {
+  updateButtonFace();
   let buttonColor = getCurrentFernColor();
   push();
   noStroke();
@@ -352,7 +356,7 @@ function getCurrentFernColor() {
 function mousePressed() {
   if (fernInstances.length >= maxFerns) {
     createRandomFern();
-    buttonText = (e = eyeArray[floor(random(eyeArray.length))], e + mouthArray[floor(random(mouthArray.length))] + e);
+    randomizeButtonFace();
   } else {
     createFollowerFern();
   }
@@ -384,6 +388,25 @@ function formatPi(value) {
   let k = floor(value / PI);
   let remainder = value - k * PI;
   return `${k}PI+${remainder.toFixed(2)}`;
+}
+
+function randomizeButtonFace() {
+  buttonEyes = eyeArray[floor(random(eyeArray.length))];
+  buttonMouth = mouthArray[floor(random(mouthArray.length))];
+  buttonText = `${buttonEyes}${buttonMouth}${buttonEyes}`;
+}
+
+function updateButtonFace() {
+  let willResetNext = fernInstances.length >= maxFerns;
+  if (willResetNext && !lastWillResetNext) {
+    let nextMouth = mouthArray[floor(random(mouthArray.length))];
+    if (nextMouth === buttonMouth && mouthArray.length > 1) {
+      nextMouth = mouthArray[(mouthArray.indexOf(nextMouth) + 1) % mouthArray.length];
+    }
+    buttonMouth = nextMouth;
+    buttonText = `${buttonEyes}${buttonMouth}${buttonEyes}`;
+  }
+  lastWillResetNext = willResetNext;
 }
 //ideas:
 // add successive buttons to lock/pulsate the parameters
