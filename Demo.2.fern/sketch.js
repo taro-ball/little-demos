@@ -1,5 +1,5 @@
 let fernInstances = [];
-let stationaryFerns = [];
+let armFerns = [];
 let BUTTON_RECT;
 let currentFernConfig;
 let headX = 0;
@@ -9,6 +9,7 @@ let headDY = 0;
 let headAngle = 0;
 let headAngleVel = 0;
 let maxFerns = 0;
+let FrondFade = 10;
 
 function setup() {
   createCanvas(980, 1500);
@@ -69,12 +70,11 @@ function createRandomFern() {
     )
   ];
 
-  let sideOffset = 10;
-  let sideY = headY || BUTTON_RECT.y + BUTTON_RECT.h / 2;
-  stationaryFerns = [
+  let armPositions = getArmFernPositions();
+  armFerns = [
     new Fern(
-      (headX ? headX - BUTTON_RECT.w / 2 : BUTTON_RECT.x) - sideOffset,
-      sideY,
+      armPositions.leftX,
+      armPositions.leftY,
       1,
       insideDiameter,
       segmentSize,
@@ -85,8 +85,8 @@ function createRandomFern() {
       0
     ),
     new Fern(
-      (headX ? headX - BUTTON_RECT.w / 2 : BUTTON_RECT.x) + BUTTON_RECT.w + sideOffset,
-      sideY,
+      armPositions.rightX,
+      armPositions.rightY,
       1,
       insideDiameter,
       segmentSize,
@@ -211,22 +211,20 @@ class Frond {
     push();
     translate(this.x - baseX, this.y - baseY);
     noFill();
-    if (this.colorHSL && this.colorHSL.length >= 3) {
-      stroke(
-        this.colorHSL[0],
-        this.colorHSL[1],
-        this.colorHSL[2],
-        this.colorHSL.length > 3 ? this.colorHSL[3] : 1
-      );
-    }
-
     let prevX, prevY;
     for (let a = curlsAdjusted; a > end; a -= this.segmentSize) {
       let r = this.insideDiameter + a * scale2;
       let x = r * cos(a);
       let y = r * sin(a);
 
-      let sw = map(a, end, curlsAdjusted, 0, this.strokeMax);
+      let segT = map(a, end, curlsAdjusted, 0, 1);
+      let sw = map(a, end, curlsAdjusted, 0, this.strokeMax) * lerp(1, 0.6, segT);
+      if (this.colorHSL && this.colorHSL.length >= 3) {
+        let baseLight = this.colorHSL[2];
+        let baseAlpha = this.colorHSL.length > 3 ? this.colorHSL[3] : 1;
+        let segLight = constrain(baseLight - segT * FrondFade, 0, 100);
+        stroke(this.colorHSL[0], this.colorHSL[1], segLight, baseAlpha);
+      }
       strokeWeight(sw);
 
       if (prevX !== undefined) {
@@ -251,17 +249,10 @@ function draw() {
   BUTTON_RECT.y = headY - BUTTON_RECT.h / 2;
 
   let sideOffset = 10;
-  let sideY = headY;
-  if (stationaryFerns.length >= 2) {
-    let handOffset = BUTTON_RECT.w / 2 + sideOffset;
-    let cosA = cos(headAngle);
-    let sinA = sin(headAngle);
-    let leftX = headX + (-handOffset * cosA);
-    let leftY = headY + (-handOffset * sinA);
-    let rightX = headX + (handOffset * cosA);
-    let rightY = headY + (handOffset * sinA);
-    stationaryFerns[0].setPosition(leftX, leftY);
-    stationaryFerns[1].setPosition(rightX, rightY);
+  if (armFerns.length >= 2) {
+    let armPositions = getArmFernPositions();
+    armFerns[0].setPosition(armPositions.leftX, armPositions.leftY);
+    armFerns[1].setPosition(armPositions.rightX, armPositions.rightY);
   }
 
   for (let i = 0; i < fernInstances.length; i++) {
@@ -286,7 +277,7 @@ function draw() {
     fern.draw(targetX, targetY, maxDist);
   }
 
-  for (let fern of stationaryFerns) {
+  for (let fern of armFerns) {
     fern.draw(mouseX, mouseY, maxDist);
   }
 
@@ -306,6 +297,21 @@ function updateHead(mx, my) {
   let targetAngle = constrain(headDX * 0.02, -0.35, 0.35);
   headAngleVel = (headAngleVel + (targetAngle - headAngle) * 0.2 * dt) * pow(0.7, dt);
   headAngle += headAngleVel * dt;
+}
+
+function getArmFernPositions() {
+  let armYOffset = BUTTON_RECT.h * 0.8 + 30;
+  let armSpread = BUTTON_RECT.w * 0.35;
+  let cosA = cos(headAngle);
+  let sinA = sin(headAngle);
+  let topX = headX + sinA * armYOffset;
+  let topY = headY - cosA * armYOffset;
+  return {
+    leftX: topX - armSpread * cosA,
+    leftY: topY - armSpread * sinA,
+    rightX: topX + armSpread * cosA,
+    rightY: topY + armSpread * sinA
+  };
 }
 
 let eyeArray = "@#^*-+=07QQWTYUIO7AHXV<>~:x"
