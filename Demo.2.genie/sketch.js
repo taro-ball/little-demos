@@ -24,7 +24,7 @@ function createRandomFern() {
   let segmentSize = random(0.9, 2.2);
   let insideDiameter = random(0, 10);
   let strokeMax = random(4, 20);
-  let frondFade = 14 - strokeMax;
+  let frondFade = 14 - strokeMax/2;
   let hue = random(80, 160);
   let saturation = random(65, 100);
   let lightness = random(35, 75);
@@ -107,6 +107,8 @@ function createFollowerFern() {
   if (!currentFernConfig || !fernInstances.length) return;
 
   let leader = fernInstances[fernInstances.length - 1];
+  let followerScale2 = leader.scale2 * 0.9;
+  let followerBaseCurls = leader.baseCurls + 0.3;
   fernInstances.push(
     new Fern(
       leader.x,
@@ -116,9 +118,9 @@ function createFollowerFern() {
       currentFernConfig.segmentSize,
       currentFernConfig.strokeMax,
       currentFernConfig.frondFade,
-      currentFernConfig.baseCurls,
+      followerBaseCurls,
       currentFernConfig.fernColorHSL,
-      currentFernConfig.scale2,
+      followerScale2,
       0
     )
   );
@@ -146,6 +148,7 @@ class Fern {
     this.invertDependency = invertDependency;
     this.colorHSL = colorHSL;
     this.scale2 = scale2;
+    this.baseCurls = baseCurls;
 
     let spacing = TWO_PI / frondCount;
     for (let i = 0; i < frondCount; i++) {
