@@ -9,7 +9,7 @@ let headDY = 0;
 let headAngle = 0;
 let headAngleVel = 0;
 let maxFerns = 0;
-let FrondFade = 10;
+let FrondFade = 18;
 
 function setup() {
   createCanvas(980, 1500);
