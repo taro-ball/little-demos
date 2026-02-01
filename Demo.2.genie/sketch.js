@@ -9,7 +9,6 @@ let headDY = 0;
 let headAngle = 0;
 let headAngleVel = 0;
 let maxFerns = 0;
-let FrondFade = 18;
 
 function setup() {
   createCanvas(980, 1500);
@@ -24,7 +23,8 @@ function createRandomFern() {
   let frondCount = floor(random(1, 6));
   let segmentSize = random(0.9, 2.2);
   let insideDiameter = random(0, 10);
-  let strokeMax = random(4, 14);
+  let strokeMax = random(4, 20);
+  let frondFade = 14 - strokeMax;
   let hue = random(80, 160);
   let saturation = random(65, 100);
   let lightness = random(35, 75);
@@ -38,6 +38,7 @@ function createRandomFern() {
     insideDiameter,
     segmentSize,
     strokeMax,
+    frondFade,
     baseCurls,
     fernColorHSL,
     scale2
@@ -49,6 +50,7 @@ function createRandomFern() {
     segmentSize,
     insideDiameter,
     strokeMax,
+    frondFade,
     fernColorHSL,
     baseCurls,
     scale2
@@ -62,6 +64,7 @@ function createRandomFern() {
       insideDiameter,
       segmentSize,
       strokeMax,
+      frondFade,
       baseCurls,
       fernColorHSL,
       scale2,
@@ -78,6 +81,7 @@ function createRandomFern() {
       insideDiameter,
       segmentSize,
       strokeMax,
+      frondFade,
       baseCurls,
       fernColorHSL,
       scale2,
@@ -90,6 +94,7 @@ function createRandomFern() {
       insideDiameter,
       segmentSize,
       strokeMax,
+      frondFade,
       baseCurls,
       fernColorHSL,
       scale2,
@@ -110,6 +115,7 @@ function createFollowerFern() {
       currentFernConfig.insideDiameter,
       currentFernConfig.segmentSize,
       currentFernConfig.strokeMax,
+      currentFernConfig.frondFade,
       currentFernConfig.baseCurls,
       currentFernConfig.fernColorHSL,
       currentFernConfig.scale2,
@@ -126,6 +132,7 @@ class Fern {
     insideDiameter,
     segmentSize,
     strokeMax,
+    frondFade,
     baseCurls,
     colorHSL,
     scale2,
@@ -144,7 +151,17 @@ class Fern {
     for (let i = 0; i < frondCount; i++) {
       let curls = baseCurls + i * spacing;
       this.fronds.push(
-        new Frond(x, y, insideDiameter, segmentSize, strokeMax, curls, this.colorHSL, this.invertDependency)
+        new Frond(
+          x,
+          y,
+          insideDiameter,
+          segmentSize,
+          strokeMax,
+          frondFade,
+          curls,
+          this.colorHSL,
+          this.invertDependency
+        )
       );
     }
   }
@@ -185,12 +202,23 @@ class Fern {
 }
 
 class Frond {
-  constructor(x, y, insideDiameter, segmentSize, strokeMax, curls, colorHSL, invertDependency = false) {
+  constructor(
+    x,
+    y,
+    insideDiameter,
+    segmentSize,
+    strokeMax,
+    frondFade,
+    curls,
+    colorHSL,
+    invertDependency = false
+  ) {
     this.x = x;
     this.y = y;
     this.insideDiameter = insideDiameter;
     this.segmentSize = segmentSize;
     this.strokeMax = strokeMax;
+    this.frondFade = frondFade;
     this.curls = curls;
     this.invertDependency = invertDependency;
     this.colorHSL = colorHSL;
@@ -221,7 +249,7 @@ class Frond {
       if (this.colorHSL && this.colorHSL.length >= 3) {
         let baseLight = this.colorHSL[2];
         let baseAlpha = this.colorHSL.length > 3 ? this.colorHSL[3] : 1;
-        let segLight = constrain(baseLight - segT * FrondFade, 0, 100);
+        let segLight = constrain(baseLight - segT * this.frondFade, 0, 100);
         stroke(this.colorHSL[0], this.colorHSL[1], segLight, baseAlpha);
       }
       strokeWeight(sw);
