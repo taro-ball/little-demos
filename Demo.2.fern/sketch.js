@@ -30,9 +30,8 @@ function createRandomFern() {
   let lightness = random(35, 75);
   let fernColorHSL = [hue, saturation, lightness];
   let baseCurls = random(3, 10);
-  let scale2 = random(3, 7);
-  let baseMax = map(scale2, 3, 7, 12, 4);
-  maxFerns = max(2, floor(baseMax + random(-1, 2)));
+  let scale2 = random(2, 4);
+  maxFerns = 12 - scale2*2
 
   currentFernConfig = {
     frondCount,
@@ -277,11 +276,12 @@ function draw() {
     fern.draw(targetX, targetY, maxDist);
   }
 
+  drawFernButton(headAngle);
+  //drawDebugInfo();
+
   for (let fern of armFerns) {
     fern.draw(mouseX, mouseY, maxDist);
   }
-
-  drawFernButton(headAngle);
 }
 
 function updateHead(mx, my) {
@@ -300,8 +300,8 @@ function updateHead(mx, my) {
 }
 
 function getArmFernPositions() {
-  let armYOffset = BUTTON_RECT.h * 0.8 + 30;
-  let armSpread = BUTTON_RECT.w * 0.35;
+  let armYOffset = BUTTON_RECT.h * 0.4;
+  let armSpread = BUTTON_RECT.w * 0.5;
   let cosA = cos(headAngle);
   let sinA = sin(headAngle);
   let topX = headX + sinA * armYOffset;
@@ -363,6 +363,27 @@ function isOverButton(mx, my) {
     mx >= BUTTON_RECT.x && mx <= BUTTON_RECT.x + BUTTON_RECT.w &&
     my >= BUTTON_RECT.y && my <= BUTTON_RECT.y + BUTTON_RECT.h
   );
+}
+
+function drawDebugInfo() {
+  let baseCurls = currentFernConfig ? currentFernConfig.baseCurls : null;
+  push();
+  textAlign(RIGHT, TOP);
+  textSize(16);
+  fill(0, 0, 0, 0.8);
+  text(
+    `baseCurls: ${baseCurls !== null ? formatPi(baseCurls) : "n/a"}`,
+    width - 20,
+    20
+  );
+  text(`maxFerns: ${maxFerns}`, width - 20, 40);
+  pop();
+}
+
+function formatPi(value) {
+  let k = floor(value / PI);
+  let remainder = value - k * PI;
+  return `${k}PI+${remainder.toFixed(2)}`;
 }
 //ideas:
 // add successive buttons to lock/pulsate the parameters
